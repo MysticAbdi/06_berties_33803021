@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title><%=shopData.shopName%></title>
+    <link rel="stylesheet"  type="text/css" href="/main.css" />
+  </head>
+  <body>
+    <h1>Available books</h1>
+
+    <% if (availableBooks && availableBooks.length) { %>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Title</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <% availableBooks.forEach(b => { %>
+            <tr>
+              <td><%= b.id %></td>
+              <td><%= b.name %></td>
+              <td>£<%= b.price %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No books found.</p>
+    <% } %>
+
+    <p><a href="/">Back home</a></p>
+  </body>
+</html>
