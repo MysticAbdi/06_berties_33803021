@@ -46,13 +46,31 @@ Small Express + MySQL demo app for managing and searching a book catalog and bas
    The server listens on port 8000 by default.
 
 ## Usage
+
 - Open http://localhost:8000/
-- Book routes are mounted under `/books` (see [routes/books.js](routes/books.js)):
-  - /books/list - list all books
-  - /books/bargainbooks - books under £20
-  - /books/search - search page
-  - /books/addbook - add a book
-- User routes are under `/users` (see [routes/users.js](routes/users.js)):
-  - /users/register - register a new user
-  - /users/login - login
-  - /users/audit - login attempts audit
+
+### Book Routes (`/books`) - see [routes/books.js](routes/books.js)
+
+- `/books/list` - list all books  
+  - **Restricted route** - requires login  
+
+- `/books/bargainbooks` - view books under £20  
+  - **Public route** - no login required  
+
+- `/books/search` - book search page  
+  - **Public route** - no login required  
+
+- `/books/addbook` - submit new book  
+  - **Restricted route** - requires login  
+
+### User Routes (`/users`) - see [routes/users.js](routes/users.js)
+
+- `/users/register` - registration form  
+  - **Public route** - no login required  
+
+- `/users/login` - login form  
+  - **Public route** - no login required  
+
+- `/users/audit` - login attempts audit  
+  - **Restricted route** - requires login  
+

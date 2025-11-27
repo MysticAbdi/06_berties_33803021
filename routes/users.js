@@ -2,6 +2,13 @@
 const express = require("express")
 const router = express.Router()
 const bcrypt = require('bcrypt')
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+      res.redirect('../users/login') // redirect to the login page
+    } else { 
+        next (); // move to the next middleware function
+    } 
+}
 
 //  User registration routes
 router.get('/register', function (req, res, next) {
@@ -79,7 +86,10 @@ router.post('/loggedin', function(req, res, next) {
             const match = await bcrypt.compare(password, user.hashedPassword);
 
             if (match) {
-                 //Successful attempt
+                // Save user session here, when login is successful
+                req.session.userId = req.body.username;
+
+                //Successful attempt
                 db.query("INSERT INTO loginAttempts (username, success, reason) VALUES (?, ?, ?)",
                 [cleanUsername, true, "Login successful"]);
                 res.send(`
@@ -104,8 +114,18 @@ router.post('/loggedin', function(req, res, next) {
         });
     });
 
+    // User logout route
+    router.get('/logout', redirectLogin, (req,res) => {
+        req.session.destroy(err => {
+        if (err) {
+          return res.redirect('../')
+        }
+        res.send('you are now logged out. <a href='+'../'+'>Home</a>');
+        });
+    });
+
 // Audit log route
-router.get('/audit', function (req, res, next) {
+router.get('/audit', redirectLogin, function (req, res, next) {
     let sqlquery = "SELECT * FROM loginAttempts ORDER BY attemptTime DESC";
 
     db.query(sqlquery, (err, result) => {
@@ -115,5 +135,7 @@ router.get('/audit', function (req, res, next) {
         res.render('audit.ejs', { attempts: result });
     });
 });
+
+
 // Export the router object so index.js can access it
 module.exports = router

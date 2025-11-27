@@ -4,10 +4,21 @@ var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2');
 require('dotenv').config();
+var session = require ('express-session')
 
 // Create the express application object
 const app = express()
 const port = 8000
+
+// Create a session
+app.use(session({
+    secret: 'somerandomstuff',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
 
 // Define the database connection pool
 const db = mysql.createPool({
