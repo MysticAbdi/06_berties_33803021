@@ -1,6 +1,8 @@
 // Create a new router
 const express = require("express")
 const router = express.Router()
+const { check, validationResult, query } = require('express-validator');
+
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId ) {
       res.redirect('../users/login') // redirect to the login page
@@ -10,28 +12,46 @@ const redirectLogin = (req, res, next) => {
 }
 
 router.get('/search',function(req, res, next){
-    res.render("search.ejs")
+    res.render("search.ejs", { errors: [] })
 });
 
 // Search result route
-router.get('/search-result',  function (req, res, next) {
-    const keyword = (req.query.keyword || '').trim();
+router.get(
+  '/search-result',
+  [
+    query('keyword')
+      .trim()
+      .escape()
+      .isLength({ min: 1, max: 50 })
+      .withMessage('Search keyword must be between 1 and 50 characters')
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+   
+    if (!errors.isEmpty()) {
+      return res.render('search.ejs', { errors: errors.array() });
+    }
+    
+    const rawKeyword = req.query.keyword || '';
+    const keyword = req.sanitize(rawKeyword).trim();
 
     if (!keyword) {
-        return res.render("search-result.ejs", { availableBooks: [] });
+      return res.render('search-result.ejs', { availableBooks: [] });
     }
 
     const sqlquery = 'SELECT name, price FROM books WHERE name LIKE ?';
     const params = ['%' + keyword + '%'];
 
     db.query(sqlquery, params, (err, result) => {
-        if (err) return next(err);
-        res.render("search-result.ejs", { availableBooks: result });
+      if (err) return next(err);
+      res.render('search-result.ejs', { availableBooks: result });
     });
-});
+  }
+);
 
 // List books route
-router.get('/list', redirectLogin, function(req, res, next) {
+router.get('/list', function(req, res, next) {
     let sqlquery = "SELECT * FROM books"; // query database to get all the books
     // execute sql query
     db.query(sqlquery, (err, result) => {
@@ -44,10 +64,29 @@ router.get('/list', redirectLogin, function(req, res, next) {
 
 // Add book route
 router.get('/addbook', redirectLogin, function (req, res, next) {
-  res.render('addbook.ejs');
+  res.render('addbook.ejs', { errors: [] });
 });
 
-router.post('/bookadded', redirectLogin, function (req, res, next) {
+router.post('/bookadded', redirectLogin, 
+  [
+    check('name')
+      .trim()
+      .escape()
+      .isLength({ min: 1, max: 100 })
+      .withMessage('Book name must be between 1 and 100 characters'),
+    check('price')
+      .trim()
+      .isFloat({ min: 0.01, max: 999 })
+      .withMessage('Price must be a valid number between £0.1 and £999 ')
+  ],
+  (req, res, next) => {
+    req.body.name = req.sanitize(req.body.name) 
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return res.render('addbook.ejs', { errors: errors.array() })
+    }
+
     // saving data in database
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
     // execute sql query
@@ -56,8 +95,9 @@ router.post('/bookadded', redirectLogin, function (req, res, next) {
         if (err) {
             next(err)
         }
-        else
-            res.send(' This book is added to database, name: '+ req.body.name + ' price '+ req.body.price)
+        else {
+            res.send('This book is added to database, name: ' + req.body.name + ' price £' + req.body.price + ' <a href="./list">Go to List</a> Or <a href="../">Home</a>') 
+        }
     })
 });
 

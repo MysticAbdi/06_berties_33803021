@@ -6,6 +6,17 @@
   </head>
   <body>
     <h1>Search <%=shopData.shopName%></h1>
+
+        <% if (errors && errors.length > 0) { %>
+    <div style="color:red; margin-bottom: 15px;">
+        <ul>
+            <% errors.forEach(function(error) { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
+
     <form action="search-result" method="GET">
       <p>What book do you want?</p>
       <input id="search-box" type="text" name="keyword">

@@ -6,6 +6,17 @@
   </head>
   <body>
     <h1>Register for <%=shopData.shopName%></h1>
+
+        <% if (errors && errors.length > 0) { %>
+    <div style="color:red; margin-bottom: 15px;">
+        <ul>
+            <% errors.forEach(function(error) { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
+
     <form method="POST" action="registered">
         <p>First name: <input id="first" type="text" name="first" /></p>
         <p>Last name: <input id="last" type="text" name="last" /></p>

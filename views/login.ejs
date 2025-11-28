@@ -5,7 +5,19 @@
     <link rel="stylesheet"  type="text/css" href="/main.css" />
   </head>
   <body>
+
     <h1>Login to <%=shopData.shopName%></h1>
+    
+            <% if (errors && errors.length > 0) { %>
+    <div style="color:red; margin-bottom: 15px;">
+        <ul>
+            <% errors.forEach(function(error) { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
+    
     <form method="POST" action="loggedin">
         <p>Username: <input id="username" type="text" name="username" /></p>
         <p>Password: <input id="password" type="password" name="password" /></p>
