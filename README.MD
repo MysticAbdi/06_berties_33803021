@@ -32,7 +32,7 @@ In all of these routes we also use parameterised queries (`db.query(sql, params)
 ### Where sanitisation is not used
 
 Some routes (for example the home page, about page, book list, bargain books, user list, etc.) only read data from the database or show static content and do not take free-text input from the user. For these routes, extra sanitisation on the request is not needed.
-::contentReference[oaicite:0]{index=0}
+
 
 ## Tech Stack
 - Node.js
