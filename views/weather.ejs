@@ -1,0 +1,45 @@
+<!-- views/weather.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%=shopData.shopName%></title>
+  <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+<div class="weather-container">
+  <h1>Weather</h1>
+
+  <p><a href="/">Back to home</a></p>
+
+  <form method="get" action="/weather/now" class="weather-form">
+    <label for="city">City name:</label>
+    <input type="text" id="city" name="city"
+           placeholder="e.g. London"
+           value="<%= weather ? weather.city : '' %>">
+    <button type="submit">Get weather</button>
+  </form>
+
+  <% if (error) { %>
+    <p class="weather-error"><%= error %></p>
+  <% } %>
+
+    <% if (weather) { %>
+      <div class="weather-box">
+        <p>
+          It is <strong><%= weather.temp %>°C</strong> in
+          <strong><%= weather.city %></strong>.
+        </p>
+        <% if (weather.description) { %>
+          <p>Conditions: <%= weather.description %></p>
+        <% } %>
+        <p>Feels like: <%= weather.feelsLike %>°C</p>
+        <p>Low / High today: <%= weather.min %>°C / <%= weather.max %>°C</p>
+        <p>Humidity: <%= weather.humidity %>%</p>
+        <% if (weather.windSpeed != null) { %>
+          <p>Wind speed: <%= weather.windSpeed %> m/s</p>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
