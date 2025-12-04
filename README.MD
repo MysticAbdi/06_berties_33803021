@@ -9,6 +9,17 @@ Small Express + MySQL demo app for managing and searching a book catalog and bas
 - Simple EJS views and static CSS in [public/main.css](public/main.css).
 - App-wide shop data exposed through [`app.locals.shopData`](index.js).
 
+## Tech Stack
+- Node.js
+- Express
+- EJS 
+- HTML5 forms & basic CSS
+- MySQL server
+
+## Prerequisites
+- Node.js
+- MySQL server
+
 ## Validation and sanitisation
 
 This app uses `express-validator` and `req.sanitize` to clean user input before it is used.
@@ -33,17 +44,38 @@ In all of these routes we also use parameterised queries (`db.query(sql, params)
 
 Some routes (for example the home page, about page, book list, bargain books, user list, etc.) only read data from the database or show static content and do not take free-text input from the user. For these routes, extra sanitisation on the request is not needed.
 
+## Books API
 
-## Tech Stack
-- Node.js
-- Express
-- EJS 
-- HTML5 forms & basic CSS
-- MySQL server
+This API provides access to the `books` table with optional filtering and sorting.
 
-## Prerequisites
-- Node.js
-- MySQL server
+---
+
+### Endpoint
+
+`GET /api/books`
+
+---
+
+### Query Parameters
+
+- `search` - filter books by name (partial match).  
+  Example:  
+  `/api/books?search=world`
+
+- `minprice` - minimum price filter.  
+  Example:  
+  `/api/books?minprice=5`
+
+- `max_price` - maximum price filter.  
+  Example:  
+  `/api/books?minprice=5&max_price=10`
+
+- `sort` - sort results by field:
+  - `name` - sort alphabetically by book name  
+  - `price` - sort numerically by price  
+
+  Example:  
+  `/api/books?sort=price`
 
 ## Setup
 
